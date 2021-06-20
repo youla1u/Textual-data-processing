@@ -1,0 +1,52 @@
+file1 = open('/content/wiki_bad.txt',"r") # Ficher des definition positives  
+file2 = open('/content/wiki_good.txt',"r",encoding="utf8")# fichier des definitions négatives 
+
+
+##############################################################################################################
+#Dans chacun des fichers téléchargés les définitions étant décrites par deux lignes nous nous interesserons 
+#qu'aux premières lignes de ces descriptions. Nous allons donc les extraires et remplacer le caractère 'TARGET' 
+#quelles contiennent par le (les) mot(s) situé(s) avant le premier ':' de la secondes descriptions, car 'TARGET' 
+#représente ce(s) mot(s) .
+#Le code ci-dessous nous permet donc de faire cette oprération. 
+###############################################################################################################
+
+
+# Extraction pour le fichier Wiki_good.txt
+wiki_good=[]
+line = file2 .readline()
+while line:
+      wiki_good.append(line)
+      line = file2.readline() 
+file2.close()
+
+Wiki_good=[]
+for i in range(round(len(wiki_good)/2)):
+    ch=wiki_good[(2*i)+1]
+    [l,r] = ch.split(":", 1)
+    t1=wiki_good[2*i].replace("TARGET",l)  
+    Wiki_good.append((t1,1))               # affectation de '1' aux lignes extraites du fichier Wiki_good.txt
+
+# Extraction pour le fichier Wiki_bad.txt
+wiki_bad=[]
+line = file1.readline()
+while line:
+      wiki_bad.append(line)
+      line = file1.readline() 
+file1.close()
+
+Wiki_bad=[] 
+for i in range(round(len(wiki_bad)/2)):
+    ch=wiki_bad[(2*i)+1]
+    [l,r] = ch.split(":", 1)
+    t1=wiki_bad[2*i].replace("TARGET",l[1:]) 
+    Wiki_bad.append((t1,0))                   # affectation de '0' aux lignes extraites du fichier Wiki_bad.txt 
+
+
+# Assemblage des linges extraites dans un dataframe  
+d1=pd.DataFrame(Wiki_good,columns=['CONTENT','CLASS'])
+d2=pd.DataFrame(Wiki_bad,columns=['CONTENT','CLASS'])
+df=pd.concat([d1,d2])
+
+
+import seaborn as sns
+sns.countplot(x='CLASS', data=df)
